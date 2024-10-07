@@ -14,6 +14,8 @@ namespace SignalR.Hubs
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
+            _pizzaManager.AddUser();
+            await Clients.All.SendAsync("nbUsers", _pizzaManager.NbConnectedUsers);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -23,6 +25,8 @@ namespace SignalR.Hubs
 
         public async Task SelectChoice(PizzaChoice choice)
         {
+            _pizzaManager.GetGroupName(choice);
+            await Clients.Caller.SendAsync("price", _pizzaManager.PIZZA_PRICES[(int)choice]);
         }
 
         public async Task UnselectChoice(PizzaChoice choice)
